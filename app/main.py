@@ -1,24 +1,18 @@
 from fastapi import FastAPI
-from app.core.database import engine
+from app.api.auth import router as auth_router
+from app.api.projects import router as project_router
 
-app = FastAPI()
+app = FastAPI(title="TaskFlow API")
 
+app.include_router(auth_router)
+app.include_router(project_router)
 
-@app.get("/health")
-def health_check():
-    try:
-        with engine.connect():
-            return {
-                "status": "ok",
-                "database": "connected",
-            }
-    except Exception as e:
-        print(f"Database connection error: {e}")
-        return {
-            "status": "error",
-            "database": "disconnected",
-        }
 
 @app.get("/")
 def root():
-    return {"message": "Welcome to TaskFlow"}
+    return {"message": "TaskFlow API"}
+
+
+@app.get("/health")
+def health():
+    return {"status": "ok"}
